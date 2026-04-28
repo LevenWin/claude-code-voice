@@ -86,15 +86,18 @@ export async function uninstall(removeScripts = false): Promise<unknown> {
   });
 }
 
-export async function preview(text: string): Promise<Blob> {
+export async function preview(
+  text: string,
+  doubao?: Partial<TtsConfig["doubao"]>,
+): Promise<Blob> {
   const res = await fetch("/api/preview", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ text }),
+    body: JSON.stringify({ text, doubao }),
   });
   if (!res.ok) {
-    const text = await res.text();
-    throw new Error(text || `${res.status} ${res.statusText}`);
+    const errText = await res.text();
+    throw new Error(errText || `${res.status} ${res.statusText}`);
   }
   return res.blob();
 }

@@ -23,8 +23,20 @@ router.post("/", async (req, res) => {
       ? installedScript
       : repoScript;
 
+    // Forward in-memory UI selection so preview doesn't depend on whether the
+    // user has clicked 保存配置 yet. Env vars take precedence over tts-config.json.
+    const doubao = req.body?.doubao ?? {};
+    const env: NodeJS.ProcessEnv = { ...process.env };
+    if (typeof doubao.voice === "string" && doubao.voice) env.CCVOICE_VOICE = doubao.voice;
+    if (typeof doubao.resource_id === "string" && doubao.resource_id)
+      env.CCVOICE_RESOURCE_ID = doubao.resource_id;
+    if (doubao.speech_rate !== undefined && doubao.speech_rate !== null)
+      env.CCVOICE_SPEECH_RATE = String(doubao.speech_rate);
+    if (typeof doubao.endpoint === "string" && doubao.endpoint)
+      env.CCVOICE_ENDPOINT = doubao.endpoint;
+
     const out = path.join(os.tmpdir(), `claude-voice-preview-${Date.now()}.mp3`);
-    const child = spawn(script, [text, out], { stdio: ["ignore", "pipe", "pipe"] });
+    const child = spawn(script, [text, out], { stdio: ["ignore", "pipe", "pipe"], env });
 
     let stderr = "";
     child.stderr.on("data", (chunk) => (stderr += chunk.toString()));

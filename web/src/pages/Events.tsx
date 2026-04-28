@@ -73,7 +73,7 @@ export function Events({ config, onChange }: {
                 </span>
               )}
               {showPhrase ? (
-                <PreviewButton text={evt.phrase ?? ""} disabled={!evt.enabled} />
+                <PreviewButton text={evt.phrase ?? ""} disabled={!evt.enabled} doubao={config.doubao} />
               ) : <span />}
             </div>
           );

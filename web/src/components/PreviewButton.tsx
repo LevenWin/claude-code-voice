@@ -1,14 +1,33 @@
 import React, { useState } from "react";
-import { preview } from "../api.ts";
+import { preview, TtsConfig } from "../api.ts";
 
-export function PreviewButton({ text, disabled }: { text: string; disabled?: boolean }) {
+const VOICE_RESOURCE_MAP: Array<{ suffix: string; resourceId: string }> = [
+  { suffix: "_uranus_bigtts", resourceId: "seed-tts-2.0" },
+  { suffix: "_moon_bigtts", resourceId: "volc.service_type.10029" },
+];
+
+function normalizeResourceId(d: Partial<TtsConfig["doubao"]>): Partial<TtsConfig["doubao"]> {
+  if (!d?.voice) return d;
+  for (const { suffix, resourceId } of VOICE_RESOURCE_MAP) {
+    if (d.voice.endsWith(suffix) && d.resource_id !== resourceId) {
+      return { ...d, resource_id: resourceId };
+    }
+  }
+  return d;
+}
+
+export function PreviewButton({ text, disabled, doubao }: {
+  text: string;
+  disabled?: boolean;
+  doubao?: Partial<TtsConfig["doubao"]>;
+}) {
   const [loading, setLoading] = useState(false);
 
   async function play() {
     if (!text.trim() || loading) return;
     setLoading(true);
     try {
-      const blob = await preview(text.trim());
+      const blob = await preview(text.trim(), doubao ? normalizeResourceId(doubao) : undefined);
       const url = URL.createObjectURL(blob);
       const audio = new Audio(url);
       audio.onended = () => URL.revokeObjectURL(url);

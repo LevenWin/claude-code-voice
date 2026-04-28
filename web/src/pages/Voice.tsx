@@ -81,7 +81,7 @@ export function Voice({ config, onChange }: {
           <span style={{ color: "var(--text-dim)", fontSize: 13 }}>
             ⏵ 用当前设置试听一句
           </span>
-          <PreviewButton text="试听一下" />
+          <PreviewButton text="试听一下" doubao={config.doubao} />
         </div>
       </div>
 

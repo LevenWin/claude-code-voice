@@ -13,10 +13,12 @@ LOG="/tmp/claude-tts.log"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 source "$SCRIPT_DIR/tts-config.sh"
 
-VOICE=$(tts_config_get '.doubao.voice' 'zh_female_roumeinvyou_uranus_bigtts')
-RESOURCE_ID=$(tts_config_get '.doubao.resource_id' 'seed-tts-2.0')
-SPEECH_RATE=$(tts_config_get '.doubao.speech_rate' '20')
-ENDPOINT=$(tts_config_get '.doubao.endpoint' 'https://openspeech.bytedance.com/api/v3/tts/unidirectional')
+# Env-var overrides take precedence over the on-disk config so the web UI
+# can preview unsaved selections.
+VOICE="${CCVOICE_VOICE:-$(tts_config_get '.doubao.voice' 'zh_female_roumeinvyou_uranus_bigtts')}"
+RESOURCE_ID="${CCVOICE_RESOURCE_ID:-$(tts_config_get '.doubao.resource_id' 'seed-tts-2.0')}"
+SPEECH_RATE="${CCVOICE_SPEECH_RATE:-$(tts_config_get '.doubao.speech_rate' '20')}"
+ENDPOINT="${CCVOICE_ENDPOINT:-$(tts_config_get '.doubao.endpoint' 'https://openspeech.bytedance.com/api/v3/tts/unidirectional')}"
 
 APPID=$(tts_credential_get 'doubao-appid')
 TOKEN=$(tts_credential_get 'doubao-token')
