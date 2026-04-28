@@ -57,5 +57,5 @@ if [[ "$MODE" == "speak-last-message" ]]; then
 fi
 
 # Default: fixed-phrase mode → delegate to tts-play.sh (cached)
-PHRASE=$(tts_config_get '.events.stop.phrase' '老公，我做完啦')
+PHRASE=$(tts_config_get '.events.stop.phrase' '已完成')
 exec "$SCRIPT_DIR/tts-play.sh" "stop" "$PHRASE"

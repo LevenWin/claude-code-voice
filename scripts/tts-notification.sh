@@ -15,7 +15,7 @@ if [[ "$ENABLED" != "true" ]]; then
   exit 0
 fi
 
-PHRASE=$(tts_config_get '.events.notification.phrase' '老公，需要你授权哦')
+PHRASE=$(tts_config_get '.events.notification.phrase' '等待授权')
 
 payload=$(cat)
 msg=$(printf '%s' "$payload" | jq -r '.message // empty' 2>/dev/null)

@@ -46,10 +46,10 @@ npx github:LevenWin/claude-code-voice
 
 | 事件 | 默认短语 |
 |------|----------|
-| Stop | 老公，我做完啦 |
-| Notification | 老公，需要你授权哦 |
-| StopFailure | 老公，出错啦 |
-| SessionStart | 老公，开工啦 |
+| Stop | 已完成 |
+| Notification | 等待授权 |
+| StopFailure | 执行失败 |
+| SessionStart | 开始工作 |
 
 短语自由改。也可以把 Stop 切到"朗读最后回复"模式，由 GLM 自动压缩。
 

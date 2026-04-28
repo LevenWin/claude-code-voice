@@ -59,7 +59,7 @@ export function Voice({ config, onChange }: {
           <span style={{ color: "var(--text-dim)", fontSize: 13 }}>
             ⏵ 用当前设置试听一句
           </span>
-          <PreviewButton text="老公，我做完啦" />
+          <PreviewButton text="试听一下" />
         </div>
       </div>
 
