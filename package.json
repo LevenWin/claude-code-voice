@@ -1,6 +1,7 @@
 {
   "name": "claude-code-voice",
-  "version": "0.1.0",
+  "version": "0.1.1",
+  "type": "module",
   "description": "Voice notifications for Claude Code, configured via local web UI",
   "license": "MIT",
   "author": "LevenWin",
@@ -23,8 +24,8 @@
     "dev": "concurrently -k -n server,web -c blue,magenta \"npm:dev:server\" \"npm:dev:web\"",
     "dev:server": "tsx watch server/index.ts",
     "dev:web": "vite",
-    "build": "npm run build:web",
-    "build:web": "vite build",
+    "build": "vite build",
+    "prepare": "node bin/prepare.js",
     "start": "npm run build && node bin/claude-voice.js serve"
   },
   "engines": {
@@ -35,7 +36,8 @@
   ],
   "dependencies": {
     "express": "^4.21.2",
-    "open": "^10.1.0"
+    "open": "^10.1.0",
+    "tsx": "^4.19.2"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",
@@ -46,7 +48,6 @@
     "concurrently": "^9.1.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "tsx": "^4.19.2",
     "typescript": "^5.7.2",
     "vite": "^6.0.7"
   }
