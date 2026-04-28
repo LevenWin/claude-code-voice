@@ -10,13 +10,35 @@ const VOICES: Array<{ value: string; label: string }> = [
   { value: "zh_female_shuangkuaisisi_moon_bigtts", label: "爽快思思（中文女声）" },
 ];
 
+// Doubao speaker suffix → resource_id. Mismatch returns API error 55000000.
+const VOICE_RESOURCE_MAP: Array<{ suffix: string; resourceId: string }> = [
+  { suffix: "_uranus_bigtts", resourceId: "seed-tts-2.0" },
+  { suffix: "_moon_bigtts", resourceId: "volc.service_type.10029" },
+];
+
+function resourceIdForVoice(voice: string): string | null {
+  for (const { suffix, resourceId } of VOICE_RESOURCE_MAP) {
+    if (voice.endsWith(suffix)) return resourceId;
+  }
+  return null;
+}
+
 export function Voice({ config, onChange }: {
   config: TtsConfig;
   onChange: (next: TtsConfig) => void;
 }) {
   const update = (patch: Partial<TtsConfig["doubao"]>) => {
-    onChange({ ...config, doubao: { ...config.doubao, ...patch } });
+    const next = { ...config.doubao, ...patch };
+    if (patch.voice !== undefined && patch.resource_id === undefined) {
+      const expected = resourceIdForVoice(patch.voice);
+      if (expected) next.resource_id = expected;
+    }
+    onChange({ ...config, doubao: next });
   };
+
+  const expectedResourceId = resourceIdForVoice(config.doubao.voice);
+  const resourceMismatch = expectedResourceId !== null
+    && expectedResourceId !== config.doubao.resource_id;
 
   return (
     <div>
@@ -73,6 +95,11 @@ export function Voice({ config, onChange }: {
             onChange={(e) => update({ resource_id: e.target.value })}
           />
         </div>
+        {resourceMismatch && (
+          <div style={{ color: "#d97706", fontSize: 12, marginTop: -4 }}>
+            ⚠ 当前音色推荐 Resource ID：<code>{expectedResourceId}</code>。不匹配会返回错误码 55000000（resource ID is mismatched with speaker）。
+          </div>
+        )}
         <div className="row">
           <label>Endpoint</label>
           <input
