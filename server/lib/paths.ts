@@ -1,12 +1,23 @@
 import path from "node:path";
 import os from "node:os";
+import fs from "node:fs";
 import { fileURLToPath } from "node:url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Repo paths (where this package lives)
-export const REPO_ROOT = path.resolve(__dirname, "..", "..");
+// Repo paths (where this package lives).
+// In source, __dirname is server/lib. In the bundled build, it's server/dist.
+// Walk up until we find package.json.
+function findRepoRoot(start: string): string {
+  let dir = start;
+  while (dir !== path.dirname(dir)) {
+    if (fs.existsSync(path.join(dir, "package.json"))) return dir;
+    dir = path.dirname(dir);
+  }
+  return start;
+}
+export const REPO_ROOT = findRepoRoot(__dirname);
 export const REPO_SCRIPTS_DIR = path.join(REPO_ROOT, "scripts");
 export const REPO_DEFAULT_CONFIG = path.join(REPO_SCRIPTS_DIR, "tts-config-default.json");
 export const REPO_WEB_DIST = path.join(REPO_ROOT, "web", "dist");

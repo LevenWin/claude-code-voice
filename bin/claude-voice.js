@@ -49,25 +49,18 @@ Claude Code Voice — 配置 Claude Code 的语音播报
 }
 
 async function serve() {
-  const distExists = await fs
-    .access(path.join(REPO_ROOT, "web", "dist", "index.html"))
-    .then(() => true)
-    .catch(() => false);
+  const serverBundle = path.join(REPO_ROOT, "server", "dist", "server.mjs");
+  const webIndex = path.join(REPO_ROOT, "web", "dist", "index.html");
 
-  if (!distExists) {
-    console.log("[claude-voice] Web UI 未构建，正在构建…");
-    await runCmd("npm", ["run", "build"], REPO_ROOT);
+  if (!(await fileExists(serverBundle)) || !(await fileExists(webIndex))) {
+    console.log("[claude-voice] build artifacts missing, building…");
+    await runCmd("node", [path.join(REPO_ROOT, "bin", "prepare.js")]);
   }
 
-  const tsxBin = path.join(REPO_ROOT, "node_modules", ".bin", "tsx");
-  const tsxExists = await fs
-    .access(tsxBin)
-    .then(() => true)
-    .catch(() => false);
-
-  if (!tsxExists) {
+  if (!(await fileExists(serverBundle))) {
     console.error(
-      "[claude-voice] 找不到 tsx。请确保依赖已安装：在仓库目录运行 `npm install`"
+      "[claude-voice] 构建失败：server bundle 仍然不存在。\n" +
+        "  请在仓库目录运行 `npm install --include=dev` 后重试。"
     );
     process.exit(1);
   }
@@ -76,20 +69,19 @@ async function serve() {
   const host = process.env.CCVOICE_HOST ?? "127.0.0.1";
   const url = `http://${host}:${port}`;
 
-  const child = spawn(tsxBin, [path.join(REPO_ROOT, "server", "index.ts")], {
+  const child = spawn(process.execPath, [serverBundle], {
     stdio: "inherit",
     cwd: REPO_ROOT,
     env: { ...process.env, CCVOICE_PORT: port, CCVOICE_HOST: host },
   });
 
-  // Try to open browser shortly after server starts
   if (process.env.CCVOICE_NO_OPEN !== "1") {
     setTimeout(async () => {
       try {
         const { default: open } = await import("open");
         await open(url);
       } catch {
-        // Best-effort; if it fails the user can navigate manually
+        // best-effort
       }
     }, 800);
   }
@@ -99,11 +91,20 @@ async function serve() {
   process.on("SIGTERM", () => child.kill("SIGTERM"));
 }
 
-function runCmd(cmd, args, cwd) {
+function runCmd(cmd, args) {
   return new Promise((resolve, reject) => {
-    const child = spawn(cmd, args, { stdio: "inherit", cwd });
+    const child = spawn(cmd, args, { stdio: "inherit", cwd: REPO_ROOT });
     child.on("exit", (code) =>
       code === 0 ? resolve() : reject(new Error(`${cmd} ${args.join(" ")} failed`))
     );
   });
+}
+
+async function fileExists(p) {
+  try {
+    await fs.access(p);
+    return true;
+  } catch {
+    return false;
+  }
 }
