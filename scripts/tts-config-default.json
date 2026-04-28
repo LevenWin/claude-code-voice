@@ -1,0 +1,28 @@
+{
+  "doubao": {
+    "voice": "zh_female_roumeinvyou_uranus_bigtts",
+    "speech_rate": 20,
+    "resource_id": "seed-tts-2.0",
+    "endpoint": "https://openspeech.bytedance.com/api/v3/tts/unidirectional"
+  },
+  "glm": {
+    "enabled": true,
+    "model": "glm-4-flash",
+    "summary_threshold": 80,
+    "max_chars": 500,
+    "fallback_chars": 120,
+    "timeout": 5,
+    "endpoint": "https://open.bigmodel.cn/api/paas/v4/chat/completions"
+  },
+  "events": {
+    "stop":            { "enabled": true,  "mode": "fixed-phrase", "phrase": "老公，我做完啦" },
+    "notification":    { "enabled": true,  "phrase": "老公，需要你授权哦" },
+    "stop-failure":    { "enabled": false, "phrase": "老公，出错啦" },
+    "session-start":   { "enabled": false, "phrase": "老公，开工啦" },
+    "session-end":     { "enabled": false, "phrase": "老公，下班啦" },
+    "subagent-stop":   { "enabled": false, "phrase": "老公，小弟回来啦" },
+    "task-completed":  { "enabled": false, "phrase": "老公，任务完成啦" },
+    "pre-compact":     { "enabled": false, "phrase": "老公，要压缩上下文啦" },
+    "worktree-create": { "enabled": false, "phrase": "老公，工作树好啦" }
+  }
+}

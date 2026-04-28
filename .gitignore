@@ -1,0 +1,15 @@
+node_modules/
+web/dist/
+*.log
+.DS_Store
+.env
+.env.local
+
+# Local credentials (never commit)
+.doubao-appid
+.doubao-token
+.glm-key
+
+# Editor
+.vscode/
+.idea/

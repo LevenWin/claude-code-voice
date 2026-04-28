@@ -1,0 +1,53 @@
+{
+  "name": "claude-code-voice",
+  "version": "0.1.0",
+  "description": "Voice notifications for Claude Code, configured via local web UI",
+  "license": "MIT",
+  "author": "LevenWin",
+  "homepage": "https://github.com/LevenWin/claude-code-voice",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LevenWin/claude-code-voice.git"
+  },
+  "bin": {
+    "claude-voice": "bin/claude-voice.js"
+  },
+  "files": [
+    "bin",
+    "scripts",
+    "server",
+    "web/dist",
+    "docs"
+  ],
+  "scripts": {
+    "dev": "concurrently -k -n server,web -c blue,magenta \"npm:dev:server\" \"npm:dev:web\"",
+    "dev:server": "tsx watch server/index.ts",
+    "dev:web": "vite",
+    "build": "npm run build:web",
+    "build:web": "vite build",
+    "start": "npm run build && node bin/claude-voice.js serve"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "os": [
+    "darwin"
+  ],
+  "dependencies": {
+    "express": "^4.21.2",
+    "open": "^10.1.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.10.0",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "@vitejs/plugin-react": "^4.3.4",
+    "concurrently": "^9.1.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.7"
+  }
+}
