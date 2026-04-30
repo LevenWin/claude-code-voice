@@ -13,6 +13,7 @@ LOCK="/tmp/claude-tts-notification.lock"
 LOG="/tmp/claude-tts.log"
 CACHE_DIR="$HOME/.claude/cache"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+source "$SCRIPT_DIR/tts-config.sh"
 
 # Drain stdin (Claude Code passes a JSON payload we don't need here)
 cat >/dev/null 2>&1 || true
@@ -28,7 +29,7 @@ if [[ -f "$LOCK" ]]; then
 fi
 
 mkdir -p "$CACHE_DIR"
-hash=$(printf '%s' "$PHRASE" | shasum -a 1 | cut -c1-12)
+hash=$(printf '%s|%s' "$(tts_voice_signature)" "$PHRASE" | shasum -a 1 | cut -c1-12)
 cache_file="$CACHE_DIR/tts-$CACHE_KEY-$hash.mp3"
 
 if [[ ! -s "$cache_file" ]]; then

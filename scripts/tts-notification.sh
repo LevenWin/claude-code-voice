@@ -31,7 +31,7 @@ fi
 printf '%s [notif fired] %s\n' "$(date +%H:%M:%S)" "$msg" >> "$LOG"
 
 mkdir -p "$CACHE_DIR"
-hash=$(printf '%s' "$PHRASE" | shasum -a 1 | cut -c1-12)
+hash=$(printf '%s|%s' "$(tts_voice_signature)" "$PHRASE" | shasum -a 1 | cut -c1-12)
 cache_file="$CACHE_DIR/tts-notif-$hash.mp3"
 
 if [[ ! -s "$cache_file" ]]; then
@@ -50,7 +50,8 @@ touch "$LOCK"
 pkill -x afplay 2>/dev/null
 pkill -x say 2>/dev/null
 
-afplay "$cache_file"
+# Async play + release lock when audio finishes, so the hook returns fast
+# and a concurrent Stop hook isn't blocked any longer than necessary.
+( afplay "$cache_file"; rm -f "$LOCK" ) &
 
-rm -f "$LOCK"
 printf '%s [notif done] %s\n' "$(date +%H:%M:%S)" "$cache_file" >> "$LOG"

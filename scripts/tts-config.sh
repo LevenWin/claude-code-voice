@@ -23,6 +23,16 @@ tts_config_get() {
   printf '%s' "$value"
 }
 
+# Voice signature for cache keying. When voice / rate / resource_id changes,
+# hash changes → old cached mp3 is bypassed and a fresh one is synthesized.
+tts_voice_signature() {
+  local voice rate rid
+  voice=$(tts_config_get '.doubao.voice' '')
+  rate=$(tts_config_get '.doubao.speech_rate' '')
+  rid=$(tts_config_get '.doubao.resource_id' '')
+  printf '%s|%s|%s' "$voice" "$rate" "$rid"
+}
+
 # Read credential file (one of: .doubao-appid, .doubao-token, .glm-key).
 # Strips whitespace. Returns empty if file missing.
 tts_credential_get() {
