@@ -2,18 +2,42 @@ import React from "react";
 import { TtsConfig } from "../api.ts";
 import { PreviewButton } from "../components/PreviewButton.tsx";
 
-const VOICES: Array<{ value: string; label: string }> = [
-  { value: "zh_female_roumeinvyou_uranus_bigtts", label: "柔美女友（中文，默认）" },
-  { value: "zh_female_wanwanxiaohe_moon_bigtts", label: "湾湾小何（中文台湾）" },
-  { value: "zh_male_wennuanahu_moon_bigtts", label: "温暖阿虎（中文男声）" },
-  { value: "zh_male_yangguangqingnian_moon_bigtts", label: "阳光青年（中文男声）" },
-  { value: "zh_female_shuangkuaisisi_moon_bigtts", label: "爽快思思（中文女声）" },
+const VOICES: Array<{ value: string; label: string; group: string }> = [
+  // 通用
+  { value: "zh_female_roumeinvyou_uranus_bigtts", label: "柔美女友（默认）", group: "通用" },
+  { value: "zh_female_shuangkuaisisi_moon_bigtts", label: "爽快思思 / Skye",   group: "通用" },
+  { value: "zh_male_wennuanahu_moon_bigtts",      label: "温暖阿虎 / Alvin",    group: "通用" },
+  { value: "zh_male_yangguangqingnian_moon_bigtts", label: "阳光青年",          group: "通用" },
+  { value: "zh_female_cancan_mars_bigtts",        label: "灿灿 / Shiny",        group: "通用" },
+  { value: "zh_female_linjianvhai_moon_bigtts",   label: "邻家女孩",            group: "通用" },
+  { value: "zh_male_linjiananhai_moon_bigtts",    label: "邻家男孩",            group: "通用" },
+  { value: "zh_male_yuanboxiaoshu_moon_bigtts",   label: "渊博小叔",            group: "通用" },
+  { value: "zh_female_kailangjiejie_moon_bigtts", label: "开朗姐姐",            group: "通用" },
+  { value: "zh_female_tianmeixiaoyuan_moon_bigtts", label: "甜美小源",          group: "通用" },
+  // 方言 / 口音
+  { value: "zh_female_wanwanxiaohe_moon_bigtts",   label: "湾湾小何（台湾腔）", group: "方言" },
+  { value: "zh_male_jingqiangkanye_moon_bigtts",   label: "京腔侃爷（北京）",   group: "方言" },
+  { value: "zh_male_beijingxiaoye_moon_bigtts",    label: "北京小爷（北京）",   group: "方言" },
+  { value: "zh_female_wanqudashu_moon_bigtts",     label: "湾区大叔（广东腔）", group: "方言" },
+  { value: "zh_male_guozhoudege_moon_bigtts",      label: "广州德哥（粤味）",   group: "方言" },
+  { value: "zh_female_daimengchuanmei_moon_bigtts", label: "呆萌川妹（四川）",  group: "方言" },
+  { value: "zh_male_haoyuxiaoge_moon_bigtts",      label: "浩宇小哥（青岛）",   group: "方言" },
+  { value: "zh_male_guangxiyuanzhou_moon_bigtts",  label: "广西远舟（广西）",   group: "方言" },
+  { value: "zh_female_meitoujieer_moon_bigtts",    label: "妹抖洁儿（长沙）",   group: "方言" },
+  { value: "zh_male_yuzhouzixuan_moon_bigtts",     label: "豫州子轩（河南）",   group: "方言" },
+  // 角色
+  { value: "zh_female_gaolengyujie_moon_bigtts",  label: "高冷御姐",            group: "角色" },
+  { value: "zh_male_aojiaobazong_moon_bigtts",    label: "傲娇霸总",            group: "角色" },
+  { value: "zh_female_meilinvyou_moon_bigtts",    label: "魅力女友",            group: "角色" },
+  { value: "zh_male_shenyeboke_moon_bigtts",      label: "深夜博客",            group: "角色" },
+  { value: "zh_female_sajiaonvyou_moon_bigtts",   label: "撒娇女友",            group: "角色" },
 ];
 
 // Doubao speaker suffix → resource_id. Mismatch returns API error 55000000.
 const VOICE_RESOURCE_MAP: Array<{ suffix: string; resourceId: string }> = [
   { suffix: "_uranus_bigtts", resourceId: "seed-tts-2.0" },
-  { suffix: "_moon_bigtts", resourceId: "volc.service_type.10029" },
+  { suffix: "_moon_bigtts",   resourceId: "volc.service_type.10029" },
+  { suffix: "_mars_bigtts",   resourceId: "volc.service_type.10029" },
 ];
 
 function resourceIdForVoice(voice: string): string | null {
@@ -49,7 +73,13 @@ export function Voice({ config, onChange }: {
         <div className="row">
           <label>音色</label>
           <select value={config.doubao.voice} onChange={(e) => update({ voice: e.target.value })}>
-            {VOICES.map((v) => <option key={v.value} value={v.value}>{v.label}</option>)}
+            {Array.from(new Set(VOICES.map((v) => v.group))).map((group) => (
+              <optgroup key={group} label={group}>
+                {VOICES.filter((v) => v.group === group).map((v) => (
+                  <option key={v.value} value={v.value}>{v.label}</option>
+                ))}
+              </optgroup>
+            ))}
             {!VOICES.find((v) => v.value === config.doubao.voice) && (
               <option value={config.doubao.voice}>{config.doubao.voice}（自定义）</option>
             )}

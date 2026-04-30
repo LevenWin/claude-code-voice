@@ -3,7 +3,8 @@ import { preview, TtsConfig } from "../api.ts";
 
 const VOICE_RESOURCE_MAP: Array<{ suffix: string; resourceId: string }> = [
   { suffix: "_uranus_bigtts", resourceId: "seed-tts-2.0" },
-  { suffix: "_moon_bigtts", resourceId: "volc.service_type.10029" },
+  { suffix: "_moon_bigtts",   resourceId: "volc.service_type.10029" },
+  { suffix: "_mars_bigtts",   resourceId: "volc.service_type.10029" },
 ];
 
 function normalizeResourceId(d: Partial<TtsConfig["doubao"]>): Partial<TtsConfig["doubao"]> {
