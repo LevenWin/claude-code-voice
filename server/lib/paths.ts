@@ -20,12 +20,14 @@ function findRepoRoot(start: string): string {
 export const REPO_ROOT = findRepoRoot(__dirname);
 export const REPO_SCRIPTS_DIR = path.join(REPO_ROOT, "scripts");
 export const REPO_DEFAULT_CONFIG = path.join(REPO_SCRIPTS_DIR, "tts-config-default.json");
+export const REPO_DEFAULTS_AUDIO_DIR = path.join(REPO_SCRIPTS_DIR, "defaults");
 export const REPO_WEB_DIST = path.join(REPO_ROOT, "web", "dist");
 
 // User paths (where Claude Code looks)
 export const HOME = os.homedir();
 export const CLAUDE_DIR = path.join(HOME, ".claude");
 export const SCRIPTS_DIR = path.join(CLAUDE_DIR, "scripts");
+export const CACHE_DIR = path.join(CLAUDE_DIR, "cache");
 export const SETTINGS_FILE = path.join(CLAUDE_DIR, "settings.json");
 export const USER_CONFIG = path.join(SCRIPTS_DIR, "tts-config.json");
 export const LOG_FILE = "/tmp/claude-tts.log";
